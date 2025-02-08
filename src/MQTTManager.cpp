@@ -98,6 +98,12 @@ void processMqttMessage(const String &strTopic, const String &payloadCopy)
         return;
     }
 
+    if (strTopic.equals(MQTT_PREFIX + "/refreshntp"))
+    {
+        ServerManager.setNTP();
+        return;
+    }
+
     if (strTopic.equals(MQTT_PREFIX + "/r2d2"))
     {
         PeripheryManager.r2d2(payloadCopy.c_str());

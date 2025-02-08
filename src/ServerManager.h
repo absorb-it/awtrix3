@@ -13,6 +13,7 @@ public:
     void setup();
     void tick(); 
     void loadSettings();
+    void setNTP();
     void sendButton(byte btn, bool state);
     void erase();
     void sendTCP(String message);
