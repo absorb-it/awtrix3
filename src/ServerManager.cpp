@@ -50,6 +50,17 @@ void versionHandler()
     webRequest->send(200, F("text/plain"), VERSION);
 }
 
+// letzter NTP refresh
+int ntpLastRefresh = 0;
+void ServerManager_::setNTP()
+{
+    if (millis() - ntpLastRefresh > 30000)  // minimum is 30 seconds
+    {
+        MQTTManager.publish("stats/ntp", "refreshing");
+        ntpLastRefresh = millis();
+        configTzTime(NTP_TZ.c_str(), NTP_SERVER.c_str());
+    }
+}
 void ServerManager_::erase()
 {
     DisplayManager.HSVtext(0, 6, "RESET", true, 0);
@@ -247,6 +258,10 @@ void ServerManager_::setup()
         mws.addOptionBox("Auth");
         mws.addOption("Auth Username", AUTH_USER);
         mws.addOption("Auth Password", AUTH_PASS);
+        mws.addOptionBox("RX");
+        mws.addOption("Time Refresh Interval", NTP_INTERVAL);
+        mws.addHTML("<p>Set a refresh interval in minutes, if you require some higher refresh rate (lower interval) than standard (180minutes). Don't set it too low! Minimum is 1 minute.</p>", "tz_refresh");
+
         mws.addHandler("/save", HTTP_POST, saveHandler);
         addHandler();
         udp.begin(localUdpPort);
@@ -270,6 +285,7 @@ void ServerManager_::setup()
         MDNS.addServiceTxt("awtrix", "tcp", "type", "awtrix3");
     }
 
+    ntpLastRefresh = millis();
     configTzTime(NTP_TZ.c_str(), NTP_SERVER.c_str());
     tm timeInfo;
     getLocalTime(&timeInfo);
@@ -281,6 +297,11 @@ void ServerManager_::tick()
 {
     mws.run();
 
+    if (NTP_INTERVAL && NTP_INTERVAL < 180) {
+        if (millis() - ntpLastRefresh > NTP_INTERVAL * 60000) {
+            setNTP();
+        }
+    }
     if (!AP_MODE)
     {
         int packetSize = udp.parsePacket();
@@ -360,6 +381,7 @@ void ServerManager_::loadSettings()
 
         NTP_SERVER = doc["NTP Server"].as<String>();
         NTP_TZ = doc["Timezone"].as<String>();
+        NTP_INTERVAL = doc["Time Refresh Interval"].as<uint8_t>();
         MQTT_HOST = doc["Broker"].as<String>();
         MQTT_PORT = doc["Port"].as<uint16_t>();
         MQTT_USER = doc["Username"].as<String>();

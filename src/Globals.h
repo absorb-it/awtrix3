@@ -63,6 +63,7 @@ extern uint8_t MATRIX_FPS;
 extern int TIME_PER_TRANSITION;
 extern String NTP_SERVER;
 extern String NTP_TZ;
+extern uint8_t NTP_INTERVAL;
 extern bool HA_DISCOVERY;
 extern bool UPPERCASE_LETTERS;
 extern bool DFPLAYER_ACTIVE;

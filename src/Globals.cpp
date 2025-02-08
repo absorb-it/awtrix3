@@ -374,6 +374,7 @@ uint8_t MATRIX_FPS = 42;
 int TIME_PER_TRANSITION = 400;
 String NTP_SERVER = "de.pool.ntp.org";
 String NTP_TZ = "CET-1CEST,M3.5.0,M10.5.0/3";
+uint8_t NTP_INTERVAL = 180;
 bool HA_DISCOVERY = false;
 String HA_PREFIX = "homeassistant";
 // Periphery
