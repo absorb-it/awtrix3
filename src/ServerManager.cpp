@@ -1,4 +1,5 @@
 #include "ServerManager.h"
+#include "MQTTManager.h"
 #include "Globals.h"
 #include <WebServer.h>
 #include <esp-fs-webserver.h>
@@ -285,6 +286,7 @@ void ServerManager_::setup()
         MDNS.addServiceTxt("awtrix", "tcp", "type", "awtrix3");
     }
 
+    MQTTManager.publish("stats/ntp", "refreshing");
     ntpLastRefresh = millis();
     configTzTime(NTP_TZ.c_str(), NTP_SERVER.c_str());
     tm timeInfo;

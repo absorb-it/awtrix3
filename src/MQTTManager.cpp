@@ -392,6 +392,7 @@ void onMqttConnected()
         "/custom/#",
         "/switch",
         "/settings",
+        "/refreshntp",
         "/previousapp",
         "/nextapp",
         "/doupdate",
